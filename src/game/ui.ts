@@ -13,6 +13,7 @@ export class UI {
   cine = document.getElementById("cinematic")!;
   cineText = document.getElementById("cine-text")!;
   toastEl = document.getElementById("toast")!;
+  promptEl = document.getElementById("prompt")!;
   zoneChip = document.getElementById("zone-chip")!;
   hpRow = document.getElementById("hp-row")!;
   frag = document.getElementById("frag-count")!;
@@ -43,6 +44,10 @@ export class UI {
 
   constructor() {
     this.dlgNext.addEventListener("click", () => this.advance());
+    this.dialogue.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("button")) return;
+      if (!this.lines[this.idx]?.choices?.length) this.advance();
+    });
   }
 
   bindTitle(handlers: {
@@ -160,10 +165,7 @@ export class UI {
       p.textContent = "Echo Slash";
       this.pills.appendChild(p);
     }
-    if (prompt && !this.toastT) {
-      this.toastEl.textContent = prompt;
-      this.toastEl.classList.add("show");
-    }
+    this.promptEl.textContent = prompt;
   }
 
   toast(msg: string) {

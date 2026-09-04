@@ -76,6 +76,34 @@ export class Game {
     window.addEventListener("resize", () => this.resize());
     this.detectTouch();
     this.ui.showTitle(has);
+    const w = window as unknown as {
+      __WF: () => Record<string, unknown>;
+      __WF_GO: (s: SceneId) => void;
+    };
+    w.__WF_GO = (s: SceneId) => this.go(s);
+    w.__WF = () => ({
+      scene: this.scene,
+      hp: this.save.data.hp,
+      fragments: this.save.data.fragments,
+      bonds: { ...this.save.data.bonds },
+      zone: this.world?.zone.name ?? null,
+      player: this.world ? { x: this.world.player.x, y: this.world.player.y } : null,
+      enemies: this.world?.enemies.map((e) => ({
+        kind: e.kind,
+        hp: e.hp,
+        alive: e.alive,
+        x: e.x,
+        y: e.y,
+      })),
+      prompt: this.world?.prompt ?? "",
+      talking: this.ui.talking,
+      shopping: this.ui.shopping,
+      paused: this.ui.paused,
+      bridges: this.world ? [...this.world.bridges] : [],
+      cleared: this.world?.cleared ?? false,
+      weaving: this.input.weaving,
+      weavePts: this.world?.weave.length ?? 0,
+    });
     requestAnimationFrame((t) => this.frame(t));
   }
 
@@ -162,7 +190,6 @@ export class Game {
     this.audio.setMood(zone.mood);
     this.particles = new Particles();
     this.world = new World(this.host(), zone);
-    this.ui.toast(zone.name);
   }
 
   private host() {
@@ -245,6 +272,10 @@ export class Game {
       else this.ui.showPause(this.scene);
     }
     if (this.ui.paused || this.ui.talking || this.ui.shopping) {
+      this.input.consumeInteract();
+      this.input.consumeDash();
+      this.input.consumeAbility();
+      this.input.consumeWeaveEnd();
       if (this.ui.talking && this.input.consumeSkip()) this.ui.advance();
       this.drawMenuBackdrop(dt);
       return;

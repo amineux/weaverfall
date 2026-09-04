@@ -89,8 +89,8 @@ export class Input {
 
   private syncMouse(cx: number, cy: number) {
     const r = this.canvas.getBoundingClientRect();
-    this.mx = ((cx - r.left) / r.width) * this.canvas.width;
-    this.my = ((cy - r.top) / r.height) * this.canvas.height;
+    this.mx = cx - r.left;
+    this.my = cy - r.top;
   }
 
   private onTouchStart(t: Touch) {

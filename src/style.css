@@ -198,6 +198,16 @@ body.void-chrome #app {
   box-shadow: var(--shadow);
 }
 
+.prompt {
+  margin-top: 10px;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  min-height: 1.1em;
+  opacity: 0.9;
+}
+
 .toast {
   margin-top: 12px;
   min-height: 1.2em;

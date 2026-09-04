@@ -98,7 +98,7 @@ export class World {
       y: zone.spawn.y,
       vx: 0,
       vy: 0,
-      r: 14,
+      r: 16,
       hp: host.save.data.hp,
       maxHp: host.save.data.maxHp,
       stun: 0,
@@ -251,7 +251,17 @@ export class World {
       if (this.tryInteractFromWeave()) {
         this.weave = [];
       } else {
-        const result = classifyWeave(this.weave, keen);
+        let result = classifyWeave(this.weave, keen);
+        if (!result) {
+          const n = norm(aim.x - p.x, aim.y - p.y);
+          result = classifyWeave(
+            [
+              { x: p.x + n.x * 8, y: p.y + n.y * 8 },
+              { x: p.x + n.x * 110, y: p.y + n.y * 110 },
+            ],
+            keen,
+          );
+        }
         this.weave = [];
         if (result) this.fireWeave(result);
         else this.tryInteract();
@@ -280,10 +290,13 @@ export class World {
       }
     }
     const exitOpen = this.exitReady();
-    if (this.zone.exit && dist(p, this.zone.exit) < 54) {
+    if (this.zone.exit && dist(p, this.zone.exit) < 78) {
       if (exitOpen) {
         this.prompt = `Enter ${this.zone.exit.label}`;
-        if (input.consumeInteract()) this.host.goto(this.zone.exit.next);
+        if (dist(p, this.zone.exit) < 58 || input.consumeInteract()) {
+          this.host.goto(this.zone.exit.next);
+          return;
+        }
       } else this.prompt = "The seal still sleeps — clear the chamber, stitch the gulf.";
     } else if (this.interactWho && input.consumeInteract()) this.talkTo(this.interactWho);
 
@@ -512,7 +525,7 @@ export class World {
         const t = closestT(a, b, x, y);
         const px = lerp(a.x, b.x, t);
         const py = lerp(a.y, b.y, t);
-        if (dist2(x, y, px, py) < 34 * 34) on = true;
+        if (dist2(x, y, px, py) < 50 * 50) on = true;
       }
       if (!on) return true;
     }
@@ -887,16 +900,19 @@ export class World {
     if (!this.zone.exit) return;
     const e = this.zone.exit;
     const ready = this.exitReady();
-    this.host.fx.glow(ctx, e.x, e.y, 50, ready ? this.zone.palette.accent : "#334", ready ? 0.4 : 0.12);
+    this.host.fx.glow(ctx, e.x, e.y, 70, ready ? this.zone.palette.accent : "#334", ready ? 0.5 : 0.12);
     ctx.strokeStyle = ready ? this.zone.palette.accent : "rgba(255,255,255,0.15)";
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.4;
     ctx.beginPath();
-    ctx.arc(e.x, e.y, 22 + Math.sin(this.time * 2) * 3, 0, TAU);
+    ctx.arc(e.x, e.y, 28 + Math.sin(this.time * 2) * 4, 0, TAU);
     ctx.stroke();
-    ctx.font = "12px Cinzel, serif";
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, 14, 0, TAU);
+    ctx.stroke();
+    ctx.font = "13px Cinzel, serif";
     ctx.fillStyle = ready ? "#f4d07a" : "#666";
     ctx.textAlign = "center";
-    ctx.fillText(e.label, e.x, e.y - 40);
+    ctx.fillText(e.label, e.x, e.y - 48);
   }
 
   private drawEnemies(ctx: CanvasRenderingContext2D) {
@@ -986,9 +1002,9 @@ export class World {
   private drawPlayer(ctx: CanvasRenderingContext2D) {
     const p = this.player;
     ctx.save();
-    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fillStyle = "rgba(0,0,0,0.4)";
     ctx.beginPath();
-    ctx.ellipse(p.x, p.y + 16, 12, 5, 0, 0, TAU);
+    ctx.ellipse(p.x, p.y + 18, 14, 6, 0, 0, TAU);
     ctx.fill();
     ctx.lineCap = "round";
     this.host.fx.strokeGlow(
@@ -1012,27 +1028,29 @@ export class World {
       [0.28],
     );
     ctx.translate(p.x, p.y);
-    ctx.rotate(p.facing * 0.15);
+    ctx.rotate(p.facing * 0.18);
     ctx.fillStyle = "#0b0a12";
     ctx.beginPath();
-    ctx.ellipse(0, 2, 11, 15, 0, 0, TAU);
+    ctx.ellipse(0, 3, 13, 18, 0, 0, TAU);
     ctx.fill();
-    ctx.strokeStyle = "rgba(110,231,255,0.35)";
+    ctx.strokeStyle = "rgba(110,231,255,0.5)";
+    ctx.lineWidth = 1.4;
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(0, -12, 7, 0, TAU);
+    ctx.arc(0, -14, 8.5, 0, TAU);
     ctx.fill();
-    const gx = Math.cos(p.facing) * 12;
-    const gy = Math.sin(p.facing) * 8;
-    this.host.fx.glow(ctx, gx, gy, 16, "#6ee7ff", 0.55);
+    ctx.stroke();
+    const gx = Math.cos(p.facing) * 15;
+    const gy = Math.sin(p.facing) * 9;
+    this.host.fx.glow(ctx, gx, gy, 20, "#6ee7ff", 0.7);
     ctx.fillStyle = "#9ef6ff";
     ctx.beginPath();
-    ctx.arc(gx, gy, 3.2, 0, TAU);
+    ctx.arc(gx, gy, 4.2, 0, TAU);
     ctx.fill();
     ctx.fillStyle = "#f4d07a";
     ctx.beginPath();
-    ctx.arc(-3, -13, 1.4, 0, TAU);
-    ctx.arc(3, -13, 1.4, 0, TAU);
+    ctx.arc(-3.4, -15, 1.8, 0, TAU);
+    ctx.arc(3.4, -15, 1.8, 0, TAU);
     ctx.fill();
     if (p.invuln > 0) {
       ctx.strokeStyle = `rgba(255,255,255,${0.35 + Math.sin(this.time * 20) * 0.2})`;
@@ -1045,10 +1063,13 @@ export class World {
 
   private drawCompanions(ctx: CanvasRenderingContext2D) {
     const p = this.player;
-    const sx = p.x - 36 + Math.sin(this.time * 2.1) * 10;
-    const sy = p.y - 28 + Math.cos(this.time * 1.7) * 8;
-    this.drawMoth(ctx, sx, sy, this.time);
-    if (this.vesperAid) {
+    const hasSolaceNpc = this.zone.npcs.some((n) => n.who === "solace");
+    if (!hasSolaceNpc) {
+      const sx = p.x - 36 + Math.sin(this.time * 2.1) * 10;
+      const sy = p.y - 28 + Math.cos(this.time * 1.7) * 8;
+      this.drawMoth(ctx, sx, sy, this.time);
+    }
+    if (this.vesperAid && !this.zone.npcs.some((n) => n.who === "vesper")) {
       const vx = p.x + 40 + Math.cos(this.time * 1.3) * 8;
       const vy = p.y - 8 + Math.sin(this.time * 1.6) * 6;
       this.drawVesper(ctx, vx, vy, 0.2);

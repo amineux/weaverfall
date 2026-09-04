@@ -27,7 +27,7 @@ export const classifyWeave = (pts: Vec[], dmgBonus: number): WeaveResult | null 
     kind,
     points: pts.map((p) => ({ ...p })),
     damage,
-    radius: kind === "bind" ? 78 : kind === "pierce" ? 22 : 30,
+    radius: kind === "bind" ? 86 : kind === "pierce" ? 26 : 38,
     stun: kind === "bind" ? 1.55 : 0,
     echo: false,
   };

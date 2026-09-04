@@ -64,9 +64,10 @@ export const ZONES: Record<string, ZoneDef> = {
     height: 1100,
     palette: P.hub,
     walls: [
-      { x: 180, y: 160, w: 90, h: 220 },
-      { x: 1080, y: 200, w: 80, h: 180 },
-      { x: 620, y: 140, w: 160, h: 50 },
+      { x: 180, y: 220, w: 90, h: 220 },
+      { x: 1080, y: 260, w: 80, h: 180 },
+      { x: 480, y: 90, w: 70, h: 70 },
+      { x: 850, y: 90, w: 70, h: 70 },
     ],
     pits: [],
     anchors: [],
@@ -77,7 +78,7 @@ export const ZONES: Record<string, ZoneDef> = {
       { who: "archivist", x: 980, y: 420, label: "The Archivist" },
       { who: "solace", x: 560, y: 500, label: "Solace" },
     ],
-    exit: { x: 700, y: 180, next: "silk", label: "Silk Gardens" },
+    exit: { x: 700, y: 240, next: "silk", label: "Silk Gardens" },
     spawn: { x: 700, y: 720 },
     rest: true,
   },
@@ -95,8 +96,8 @@ export const ZONES: Record<string, ZoneDef> = {
     ],
     pits: [{ x: 70, y: 430, w: 1560, h: 100 }],
     anchors: [
-      { id: "a1", x: 260, y: 480 },
-      { id: "a2", x: 1440, y: 480 },
+      { id: "a1", x: 850, y: 392 },
+      { id: "a2", x: 850, y: 568 },
     ],
     bridgePairs: [["a1", "a2"]],
     enemies: [
@@ -205,8 +206,8 @@ export const ZONES: Record<string, ZoneDef> = {
     ],
     pits: [{ x: 70, y: 1180, w: 1560, h: 86 }],
     anchors: [
-      { id: "s1", x: 240, y: 1222 },
-      { id: "s2", x: 1460, y: 1222 },
+      { id: "s1", x: 850, y: 1148 },
+      { id: "s2", x: 850, y: 1300 },
     ],
     bridgePairs: [["s1", "s2"]],
     enemies: [
